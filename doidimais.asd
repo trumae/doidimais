@@ -9,12 +9,14 @@
 
 (defsystem doidimais
   :version "0.1"
-  :author "Trumae da Ilha"
+  :author "Trumae da Ilha <trumae@gmail.com>"
   :license "MIT"
   :depends-on ()
   :components ((:module "src"
-                :components
-                ((:file "doidimais"))))
+			:serial t
+			:components
+			((:file "package")
+			 (:file "doidimais"))))
   :description ""
   :long-description
   #.(with-open-file (stream (merge-pathnames
