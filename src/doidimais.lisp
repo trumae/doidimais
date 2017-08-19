@@ -34,3 +34,44 @@
 ;; > (apply (or-OP (some-op #'characterp) (some-op #'stringp)) '((() ("teste") ())))
 ;; > (apply (or-OP (some-op #'characterp) (some-op #'stringp)) '((() (nil) ())))
 
+(defun then-op(fun1 fun2)
+  (lambda (input)
+    (let ((p1 (apply fun1 (list input))))
+      (if (eq (caddr p1) 'fail)
+	  p1
+	  (let ((p2 (apply fun2 (list (list '() (cadr p1) (caddr p1))))))
+	    (if (equal (caddr p2) 'falha)
+		p2
+		(list (list (caar p1) (caar p2))
+		      (cadr p2)
+		      (caddr p2))))))))
+
+;; > (apply (then-op (some-op #'characterp) (some-op #'stringp)) '((() (#\a "teste" #\b) ())))
+;; > (apply (then-op (some-op #'characterp) (some-op #'stringp)) '((() (#\a "teste") ())))
+;; > (apply (then-op (some-op #'characterp) (some-op #'stringp)) '((() (#\a #\b) ())))
+
+
+(defun many-op(fun)
+  (lambda (input)
+    (let ((p1 (apply fun (list input))))
+      (if (eq (caddr p1) 'fail)
+	  input 
+	  (let ((p2 (apply (many-op fun) (list p1))))
+	    p2)))))
+
+
+;; > (apply (many-op (some-op #'characterp)) '((() (#\a #\b #\c) ())))
+;; > (apply (many-op (some-op #'characterp)) '((() (#\a "test" #\c) ())))
+
+
+(defun apply-op (fun handle)
+  (lambda (input)
+    (let ((p (apply fun (list input))))
+      (if (eq (caddr p) 'fail)
+	  p
+	  (list (apply handle (list (car p)))
+		(cadr p)
+		(caddr p))))))
+
+
+;; > (apply (apply-op (some-op #'characterp) (lambda (x) (list x))) '((() (#\a #\b) ())))
