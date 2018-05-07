@@ -17,7 +17,13 @@ After i buy the book @emph{Essencial of Programming Languages}(Daniel P. Friedma
 
 (in-package :cl-user)
 (defpackage doidimais
-  (:use :cl))
+  (:use :cl)
+  (:export :some-op
+	   :one-op
+	   :or-op
+	   :then-op
+	   :many-op
+	   :apply-op))
 (in-package :doidimais)
 
 
